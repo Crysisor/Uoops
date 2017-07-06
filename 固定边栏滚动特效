@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>固定边栏滚动特效</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		div#title{
+			width: 100%;
+			height: 217px;
+			overflow: hidden;
+		}
+		div#title img{
+			max-width:100%;
+			border-bottom: 3px solid pink;
+		}
+		div#left{
+			float: left;
+			width: 20%;
+			margin-left: 15%;
+			height: 1000px;
+			background-color: #333;
+		}
+		div#right{
+			float: right;
+			margin-right: 15%;
+			width: 50%;
+			height: 2000px;
+			background-color: #666;
+		}
+		div#leftBottom{
+			width: 100%;
+			height: 300px;
+			margin-top: 700px;
+			background-color: pink;
+		}
+		div#rightBottom{
+			width: 100%;
+			height: 300px;
+			margin-top: 1700px;
+			background-color: red;
+		}	
+		div#other{
+			float: left;
+			width: 70%;
+			height: 500px;
+			margin-left: 15%;
+			margin-top: 50px;
+			background-color: #999;
+		}
+	</style>
+</head>
+<body>
+	<div id="title">
+		<img src="img/title_1.png">
+	</div>
+	<div id="left">
+		<div id="leftBottom"></div>
+	</div>
+	<div id="right">
+		<div id="rightBottom"></div>
+	</div>
+	<div id="other"></div>
+
+	<script src="jquery/jquery-3.2.1.js"></script>
+	<script type="text/javascript">
+	var jWindow = $(window);
+	//给window对象绑定滚动事件
+	jWindow.scroll(function(){
+		var scrollHeight = jWindow.scrollTop();//滚动高度
+		var screenHeight = jWindow.height();//屏幕高度
+		var sideHeight = $("#left").height();//边栏高度
+		var sideHeight_2 = $("#right").height();
+		var titleHeight = $("#title").height();//顶部图片高度
+		//当滚动高度+屏幕高度>边栏高度时，触发特效
+		if (scrollHeight + screenHeight - titleHeight > sideHeight) {
+			if(scrollHeight + screenHeight - titleHeight > sideHeight_2){
+					$("#left").css({
+					"position" : "static",
+					"margin-top" : 1000 + "px"
+				});					
+			}else{
+					$("#left").css({
+					"position" : "fixed",
+					"top" : - (sideHeight - screenHeight),
+					"left" : 0,
+					"margin-top" : 0
+				});	
+			}
+		}else{
+			$("#left").css({
+				"position" : "static"
+			});
+		}
+		//加载后触发scroll事件，可以解决一些bug
+		window.onload = function(){
+			jWindow.trigger("scroll");
+		};
+		//调整浏览器窗口大小时触发scroll事件
+		jWindow.resize(function(){
+			jWindow.trigger("scroll");
+		});
+	});
+	</script>
+</body>
+</html>
