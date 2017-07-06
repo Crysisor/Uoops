@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>焦点图轮播</title>
+</head>
+<style type="text/css">
+	*{
+		margin: 0;
+		padding: 0;
+		text-decoration: none;
+	}
+	#container{
+		position: relative;
+		width: 400px;
+		height: 566px;
+		margin: 20px auto;
+		border: 1px solid #333;
+		overflow: hidden;
+	}
+	#list{
+		position: absolute;
+		width: 2800px;
+		height: 566px;
+		z-index: 1;
+	}
+	#list img{
+		float: left;/*左浮动，使图片间的间隔去除*/
+	}
+	#buttons{
+		position: absolute;
+		width: 100px;
+		height: 10px;
+		left: 40%;
+		bottom: 20px;
+		z-index: 2;
+	}
+	#buttons span{
+		float: left;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		border: 1px solid #fff;
+		background-color: #333;
+		margin-right: 5px;
+		cursor: pointer;
+	}
+	#buttons .on{
+		background-color: orangered;
+	}
+	.arrow{
+		position: absolute; 
+		width: 40px; 
+		height: 40px;
+		line-height: 40px;  
+		font-size: 40px; 
+		font-weight: bold;
+		text-align: center; 
+		top: 280px; 
+		background-color: RGBA(0,0,0,.3); 
+		color: #fff;
+		display: none;
+		z-index: 2;
+		cursor: pointer;
+	}
+	#container:hover .arrow{
+		display: block;
+	}
+	.arrow:hover{
+		background-color: RGBA(0,0,0,.7);
+	}
+	#prev{
+		left: 20px;
+	}
+	#next{
+		right: 20px;
+	}
+</style>
+<script src="jquery/jquery-3.2.1.js"></script>
+<script type="text/javascript">
+	window.onload = function(){
+		var container = document.getElementById('container');
+		var list = document.getElementById('list');
+		var buttons = document.getElementById('buttons').getElementsByTagName('span');
+		var prev = document.getElementById('prev');
+		var next = document.getElementById('next');
+		var index = 1;
+		var animated = false;//布尔值判断onclick事件动画是否在执行，动画正在执行时再按按钮不执行动画，圆点同理
+		var timer;//定时器
+
+		//对应圆点点亮
+		function showButton(){
+			for (var i = 0; i < buttons.length; i++) {
+				if(buttons[i].className == 'on'){
+					buttons[i].className = '';
+					break;
+				}
+			}
+			buttons[index - 1].className = 'on';
+		}
+
+		//封装函数，图片的转换动画
+		function animate(offset){
+			animated = true;
+			var newLeft = parseInt(list.style.left) + offset;
+			var time = 300;//位移总时间
+			var interval = 10;//位移间隔时间
+			var speed = offset/(time/interval);//每次位移量
+
+			function go(){
+				if((speed < 0 && parseInt(list.style.left) > newLeft)||(speed > 0 && parseInt(list.style.left) < newLeft)){
+					list.style.left = parseInt(list.style.left) + speed + 'px';
+					setTimeout(go, interval);
+				}else{
+					animated = false;
+					list.style.left = newLeft + 'px';
+					//边界判断，实现无限滚动
+					if(newLeft > -400){
+						list.style.left = -2000 + 'px';
+					}
+					if(newLeft < -2000){
+						list.style.left = -400 + 'px';
+					}
+				}
+			}
+			go();
+		}
+
+		//自动轮播图片，每隔几秒自动按下next
+		function play(){
+			timer = setInterval(function(){
+				next.onclick();
+			}, 3000);
+		}
+
+		//清除定时器
+		function stop(){
+			clearInterval(timer);
+		}
+
+        next.onclick = function () {
+        	//当动画正在运行时，直接return，不执行事件函数
+            if (animated) {
+                return;
+            }
+            if (index == 5) {
+                index = 1;
+            }
+            else {
+                index ++;
+            }
+            animate(-400);
+            showButton();
+        }
+
+        prev.onclick = function () {
+            if (animated) {
+                return;
+            }
+            if (index == 1) {
+                index = 5;
+            }
+            else {
+                index --;
+            }
+            animate(400);
+            showButton();
+        }
+
+		//对应圆点图片转换
+		for (var i = 0; i < buttons.length; i++) {
+			buttons[i].onclick = function(){
+				//当程序运行到这里时，会退出函数，避免在多次按下当前按钮时都运行函数
+				if((this.className == 'on')||(animated)){
+					return;
+				}
+				//获取当前自定义属性index
+				var myIndex = parseInt(this.getAttribute('index'));
+				var offset = -400 * (myIndex - index);
+				animate(offset);
+				index = myIndex;
+				showButton();
+			}
+		}
+		//鼠标移入container，停止自动轮播
+		container.onmouseover = stop;
+		//鼠标移出container，继续自动轮播
+		container.onmouseout = play;
+		//页面刚载入时，自动轮播
+		play();
+	}
+	
+	//jquery实现
+    // $(function () {
+    //     var container = $('#container');
+    //     var list = $('#list');
+    //     var buttons = $('#buttons span');
+    //     var prev = $('#prev');
+    //     var next = $('#next');
+    //     var index = 1;
+    //     var timer;
+
+    //     function animate (offset) {
+    //         var left = parseInt(list.css('left')) + offset;
+    //         offset = '+=' + offset;
+    //         list.animate({'left': offset}, 300, function () {
+    //             if(left > -400){
+    //                 list.css('left', -2000);
+    //             }
+    //             if(left < -2000) {
+    //                 list.css('left', -400);
+    //             }
+    //         });
+    //     }
+
+    //     function showButton() {
+    //         buttons.eq(index-1).addClass('on').siblings().removeClass('on');
+    //     }
+
+    //     function play() {
+    //         timer = setInterval(function () {
+    //             next.trigger('click');
+    //         }, 3000);
+    //     }
+
+    //     function stop() {
+    //         clearTimeout(timer);
+    //     }
+
+    //     next.bind('click', function () {
+    //         if (list.is(':animated')) {
+    //             return;
+    //         }
+    //         if (index == 5) {
+    //             index = 1;
+    //         }
+    //         else {
+    //             index += 1;
+    //         }
+    //         animate(-400);
+    //         showButton();
+    //     });
+
+    //     prev.bind('click', function () {
+    //         if (list.is(':animated')) {
+    //             return;
+    //         }
+    //         if (index == 1) {
+    //             index = 5;
+    //         }
+    //         else {
+    //             index -= 1;
+    //         }
+    //         animate(400);
+    //         showButton();
+    //     });
+
+    //     buttons.each(function () {
+    //          $(this).bind('click', function () {
+    //              if (list.is(':animated') || $(this).attr('class') == 'on') {
+    //                  return;
+    //              }
+    //              var myIndex = parseInt($(this).attr('index'));
+    //              var offset = -400 * (myIndex - index);
+    //              animate(offset);
+    //              index = myIndex;
+    //              showButton();
+    //          })
+    //     });
+
+    //     container.hover(stop, play);
+    //     play();
+    // });
+</script>
+<body>
+	<!-- 整个容器 -->
+	<div id="container">
+		<!-- 图片列表 -->
+		<div id="list" style="left: -400px;">
+			<img src="img/5.png" alt="1" />
+			<img src="img/1.png" alt="1" />
+			<img src="img/2.png" alt="2" />
+			<img src="img/3.png" alt="3" />
+			<img src="img/4.png" alt="4" />
+			<img src="img/5.png" alt="5" />
+			<img src="img/1.png" alt="5" />
+		</div>
+		<!-- 对应按钮 -->
+		<div id="buttons">
+			<span index="1" class="on"></span>
+			<span index="2"></span>
+			<span index="3"></span>
+			<span index="4"></span>
+			<span index="5"></span>
+		</div>
+	<!-- 左右箭头 -->
+	<a href="javascript:;" id="prev" class="arrow">&lt;</a>
+	<a href="javascript:;" id="next" class="arrow">&gt;</a>
+	</div>
+</body>
+</html>
