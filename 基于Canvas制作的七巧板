@@ -7,6 +7,8 @@
 <body>
 	<canvas id="canvas" style="border: 1px solid #aaa;display: block;margin: 0 auto;"></canvas>
 	<script type="text/javascript">
+	//七巧板的七块图案，放进一个数组中，每一个元素是一个对象
+	//对象的第一个属性又是一个数组，存放一块图案的绘制路径，第二个属性是图案的颜色
 	var arr = [
 		{p:[{x:0,y:0},{x:600,y:0},{x:300,y:300}],color:"red"},
 		{p:[{x:0,y:0},{x:300,y:300},{x:0,y:600}],color:"orange"},
@@ -22,13 +24,15 @@
 		canvas.width = 600;
 		canvas.height = 600;
 
+		//绘制每一块图案
 		if(canvas.getContext){
 			var context = canvas.getContext("2d");
 			for (var i = 0; i < arr.length; i++) {
 				draw(arr[i],context);
 			}
 		}
-
+		
+		//一块图案的绘制函数
 		function draw(part,context){
 			context.beginPath();
 			context.moveTo(part.p[0].x,part.p[0].y);
