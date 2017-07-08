@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>网页定位导航特效</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body{
+			font-family: 'Microsoft Yahei';
+		}
+		a{
+			text-decoration: none;
+		}
+		li{
+			list-style: none;
+			text-align: center;
+		}
+		div.character{
+			width: 400px;
+			height: 566px;
+			margin: 30px auto;
+			border: 1px solid #000;
+		}
+		div#menu{
+			position: fixed;
+			top: 70px;
+			left: 50%;
+			margin-left: 210px;
+			width: 160px;
+		}
+		div#menu ul li a{
+			display: inline-block;
+			margin: 5px 0;
+			font-size: 16px;
+			color: #333;
+			width: 160px;
+			height: 50px;
+			line-height: 50px;
+			text-align: center;
+		}
+		div#menu ul li a:hover,
+		div#menu ul li a.current{
+			color: #fff;
+			background-color: #0088bb;
+		}
+	</style>
+	<script src="jquery/jquery-3.2.1.js"></script>
+	<script type="text/javascript">
+        $(document).ready(function () {
+            $(window).scroll(function () {
+                var character = $(".character");
+                var menu = $("#menu");
+                var top = $(document).scrollTop();
+                var currentId = ""; //当前楼层的id
+                //为每个类名为character的元素进行if判断
+                character.each(function () {
+                    var t = $(this);
+                    var currentTop = t.offset().top;//每个character的偏移值高度
+                    //滚轮高度大于character的高度时，将这个character的id赋给currentId
+                    if (top > currentTop - 200) {
+                        currentId = t.attr("id");
+                    } else {
+                        return false;
+                    }
+                });
+
+                if (currentId) {
+                	menu.find("[class = current]").removeClass("current");
+                    menu.find("[href *= " + currentId + "]").addClass("current");
+                }
+            });
+        });
+	</script>
+</head>
+<body>
+	<div id="character_1" class="character"><img src="img/1.png"></div>
+	<div id="character_2" class="character"><img src="img/2.png"></div>
+	<div id="character_3" class="character"><img src="img/3.png"></div>
+	<div id="character_4" class="character"><img src="img/4.png"></div>
+	<div id="character_5" class="character"><img src="img/5.png"></div>
+	<!-- href = "#" 通过id定位 -->
+	<div id="menu">
+		<ul>
+			<li>1F <a href="#character_1" class="current">贞德</a></li>
+			<li>2F <a href="#character_2">玉藻前(caster)</a></li>
+			<li>3F <a href="#character_3">阿尔托莉雅(lancer)</a></li>
+			<li>4F <a href="#character_4">南丁格尔</a></li>
+			<li>5F <a href="#character_5">玉藻前(lancer)</a></li>
+		</ul>
+	</div>
+</body>
+</html>
