@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>七巧板</title>
+</head>
+<body>
+	<canvas id="canvas" style="border: 1px solid #aaa;display: block;margin: 0 auto;"></canvas>
+	<script type="text/javascript">
+	var arr = [
+		{p:[{x:0,y:0},{x:600,y:0},{x:300,y:300}],color:"red"},
+		{p:[{x:0,y:0},{x:300,y:300},{x:0,y:600}],color:"orange"},
+		{p:[{x:0,y:600},{x:150,y:450},{x:300,y:600}],color:"yellow"},
+		{p:[{x:300,y:300},{x:450,y:450},{x:300,y:600},{x:150,y:450}],color:"green"},
+		{p:[{x:300,y:300},{x:450,y:150},{x:450,y:450}],color:"blue"},
+		{p:[{x:600,y:0},{x:600,y:300},{x:450,y:450},{x:450,y:150}],color:"indigo"},
+		{p:[{x:600,y:600},{x:600,y:300},{x:300,y:600}],color:"purple"}
+	];
+
+	window.onload = function(){
+		var canvas = document.getElementById("canvas");
+		canvas.width = 600;
+		canvas.height = 600;
+
+		if(canvas.getContext){
+			var context = canvas.getContext("2d");
+			for (var i = 0; i < arr.length; i++) {
+				draw(arr[i],context);
+			}
+		}
+
+		function draw(part,context){
+			context.beginPath();
+			context.moveTo(part.p[0].x,part.p[0].y);
+			for (var i = 1; i < part.p.length; i++) {
+				context.lineTo(part.p[i].x,part.p[i].y);
+			}
+			context.closePath();
+			context.fillStyle = part.color;
+			context.fill();
+		}		
+	}
+	</script>
+</body>
+</html>
